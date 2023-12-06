@@ -28,15 +28,17 @@ class PriorityQueue {
 
     ~PriorityQueue();
 
-   public:
+   private:
     void heapifyUp(Index& index);
     void heapifyDown(const Index& index);
+
+   public:
     void buildHeap(const std::vector<T>& inputArr);
     void push(const T& item);
     void pop();
     const T& top() const;
-    int getSize() const { return arr.size(); };
-    void printArr() const;
+    int size() const { return arr.size(); };
+    bool empty() const { return arr.empty(); };
 };
 
 template <typename T>
@@ -117,15 +119,6 @@ const T& PriorityQueue<T>::top() const {
     } else {
         throw std::runtime_error("Queue is empty! cannot access top.");
     }
-}
-
-template <typename T>
-void PriorityQueue<T>::printArr() const {
-    cout << "Max-Heap: ";
-    for (int num : arr) {
-        cout << num << " ";
-    }
-    std::cout << std::endl;
 }
 
 }  // namespace  queue
