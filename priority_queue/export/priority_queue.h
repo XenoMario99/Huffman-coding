@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cmath>
 #include <iostream>
 #include <stdexcept>
 #include <utility>
@@ -39,6 +40,8 @@ class PriorityQueue {
     const T& top() const;
     int size() const { return arr.size(); };
     bool empty() const { return arr.empty(); };
+
+    void print() const;
 };
 
 template <typename T>
@@ -51,12 +54,12 @@ PriorityQueue<T>::~PriorityQueue() {}
 
 template <typename T>
 void PriorityQueue<T>::heapifyUp(Index& index) {
-    Index parentId{arr.size() % 2 == 0 ? (index - 2) / 2 : (index - 1) / 2};  // Finding parent node id depending on whether new leaf is left or right
+    Index parentId{(index - 1) / 2};
     int i{index};
-    while (index != 0 || arr.at(parentId) < arr.at(index)) {
+    while (index != 0 || arr.at(parentId) > arr.at(index)) {
         std::swap(arr.at(parentId), arr.at(index));
         index = parentId;
-        parentId = arr.size() % 2 == 0 ? (index - 2) / 2 : (index - 1) / 2;
+        parentId = (index - 1) / 2;
     }
 }
 
@@ -66,11 +69,11 @@ void PriorityQueue<T>::heapifyDown(const Index& index) {
     const auto left{2 * index + 1};   // left child of the node at given index
     const auto right{2 * index + 2};  // right child of the node at given index
 
-    if (left < arr.size() && arr.at(left) > arr.at(largest)) {
+    if (left < arr.size() && arr.at(left) < arr.at(largest)) {
         largest = left;
     }
 
-    if (right < arr.size() && arr.at(right) > arr.at(largest)) {
+    if (right < arr.size() && arr.at(right) < arr.at(largest)) {
         largest = right;
     }
 
@@ -93,7 +96,7 @@ template <typename T>
 void PriorityQueue<T>::push(const T& item) {
     if (arr.size() < maxSize) {
         arr.push_back(item);
-        Index newItemId{arr.size() - 1};
+        Index newItemId{static_cast<int>(arr.size() - 1)};
         heapifyUp(newItemId);
     } else {
         std::cout << "There is no left space in the queue" << std::endl;
@@ -119,6 +122,15 @@ const T& PriorityQueue<T>::top() const {
     } else {
         throw std::runtime_error("Queue is empty! cannot access top.");
     }
+}
+
+template <typename T>
+void PriorityQueue<T>::print() const {
+    std::cout << "Arr:" << std::endl;
+    for (auto x : arr) {
+        std::cout << x << " ";
+    }
+    std::cout << std::endl;
 }
 
 }  // namespace  queue
