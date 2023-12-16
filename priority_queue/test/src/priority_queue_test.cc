@@ -8,7 +8,7 @@ namespace queue {
 
 class PriorityQueueTest : public ::testing::Test {
    protected:
-    PriorityQueue<int> queue;
+    PriorityQueue<int, std::vector<int>, std::greater<int>> queue;
     std::priority_queue<int, std::vector<int>, std::greater<int>> refQueue;
     std::vector<int> arr{12, 11, 13, 5, 6, 7, 19, 1, 41, 3, 8, 7};
     int size;
@@ -21,24 +21,24 @@ class PriorityQueueTest : public ::testing::Test {
     };
     void TearDown() override{};
 
-    bool checkMinHeapProperty() const {
-        auto refQueue{queue};
-        while (!refQueue.empty()) {
-            const auto top{refQueue.top()};
-            refQueue.pop();
+    bool checkHeapProperty() const {
+        auto reference{queue};
+        while (!reference.empty()) {
+            const auto top{reference.top()};
+            reference.pop();
 
-            if (!refQueue.empty()) {
-                const auto leftLeaf{refQueue.top()};
-                refQueue.pop();
+            if (!reference.empty()) {
+                const auto leftLeaf{reference.top()};
+                reference.pop();
 
-                if (top > leftLeaf) return false;
+                if (std::greater<int>{}(top, leftLeaf)) return false;
             }
 
-            if (!refQueue.empty()) {
-                const auto rightLeaf{refQueue.top()};
-                refQueue.pop();
+            if (!reference.empty()) {
+                const auto rightLeaf{reference.top()};
+                reference.pop();
 
-                if (top > rightLeaf) return false;
+                if (std::greater<int>{}(top, rightLeaf)) return false;
             }
         }
 
@@ -48,7 +48,7 @@ class PriorityQueueTest : public ::testing::Test {
 
 TEST_F(PriorityQueueTest, buildHeap_ok) {
     queue.buildHeap(arr);
-    EXPECT_TRUE(checkMinHeapProperty());
+    EXPECT_TRUE(checkHeapProperty());
 }
 
 TEST_F(PriorityQueueTest, pop_ok) {
@@ -58,14 +58,12 @@ TEST_F(PriorityQueueTest, pop_ok) {
     for (int i = 0; i < popNum; i++) {
         queue.pop();
     }
-    EXPECT_TRUE(checkMinHeapProperty());
+    EXPECT_TRUE(checkHeapProperty());
     EXPECT_EQ(size, queue.size() + popNum);
 }
 
 TEST_F(PriorityQueueTest, top_and_pop_ok) {
     queue.buildHeap(arr);
-
-    queue.print();
 
     for (int i = 0; i < size; i++) {
         const auto queueTop{queue.top()};
@@ -82,8 +80,6 @@ TEST_F(PriorityQueueTest, push_ok) {
     for (const auto& elem : arr) {
         queue.push(elem);
     }
-
-    queue.print();
 
     for (int i = 0; i < size; i++) {
         const auto queueTop{queue.top()};

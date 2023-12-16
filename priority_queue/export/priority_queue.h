@@ -13,15 +13,17 @@ namespace queue {
 const unsigned int MAX_HEAP_SIZE{50};
 typedef int Index;
 
-template <typename T>
+template <typename T, typename Container = vector<T>,
+          typename Compare = std::less<typename Container::value_type>>
 class PriorityQueue {
    private:
-    std::vector<T> arr;
+    Container arr;
+    Compare comp;
     unsigned int maxSize;
 
    public:
-    PriorityQueue() : maxSize(MAX_HEAP_SIZE) {}
-    explicit PriorityQueue(const std::vector<T>& arr);
+    PriorityQueue() : arr(Container()), comp(Compare()), maxSize(MAX_HEAP_SIZE) {}
+    explicit PriorityQueue(const Container& arr);
     PriorityQueue(const PriorityQueue&) = default;
     PriorityQueue(PriorityQueue&&) = default;
     PriorityQueue& operator=(const PriorityQueue&) = default;
@@ -34,7 +36,7 @@ class PriorityQueue {
     void heapifyDown(const Index& index);
 
    public:
-    void buildHeap(const std::vector<T>& inputArr);
+    void buildHeap(const Container& inputArr);
     void push(const T& item);
     void pop();
     const T& top() const;
@@ -44,36 +46,36 @@ class PriorityQueue {
     void print() const;
 };
 
-template <typename T>
-PriorityQueue<T>::PriorityQueue(const std::vector<T>& arr) {
+template <typename T, typename Container, typename Compare>
+PriorityQueue<T, Container, Compare>::PriorityQueue(const Container& inputArr) {
     buildHeap(arr);
 }
 
-template <typename T>
-PriorityQueue<T>::~PriorityQueue() {}
+template <typename T, typename Container, typename Compare>
+PriorityQueue<T, Container, Compare>::~PriorityQueue() {}
 
-template <typename T>
-void PriorityQueue<T>::heapifyUp(Index& index) {
+template <typename T, typename Container, typename Compare>
+void PriorityQueue<T, Container, Compare>::heapifyUp(Index& index) {
     Index parentId{(index - 1) / 2};
     int i{index};
-    while (index != 0 || arr.at(parentId) > arr.at(index)) {
+    while (index != 0 && comp(arr.at(parentId), arr.at(index))) {
         std::swap(arr.at(parentId), arr.at(index));
         index = parentId;
         parentId = (index - 1) / 2;
     }
 }
 
-template <typename T>
-void PriorityQueue<T>::heapifyDown(const Index& index) {
+template <typename T, typename Container, typename Compare>
+void PriorityQueue<T, Container, Compare>::heapifyDown(const Index& index) {
     Index largest{index};
     const auto left{2 * index + 1};   // left child of the node at given index
     const auto right{2 * index + 2};  // right child of the node at given index
 
-    if (left < arr.size() && arr.at(left) < arr.at(largest)) {
+    if (left < arr.size() && comp(arr.at(largest), arr.at(left))) {
         largest = left;
     }
 
-    if (right < arr.size() && arr.at(right) < arr.at(largest)) {
+    if (right < arr.size() && comp(arr.at(largest), arr.at(right))) {
         largest = right;
     }
 
@@ -83,17 +85,16 @@ void PriorityQueue<T>::heapifyDown(const Index& index) {
     }
 }
 
-template <typename T>
-void PriorityQueue<T>::buildHeap(const std::vector<T>& inputArr) {
+template <typename T, typename Container, typename Compare>
+void PriorityQueue<T, Container, Compare>::buildHeap(const Container& inputArr) {
     arr = std::move(inputArr);
-
     for (Index index{static_cast<Index>(arr.size() / 2 - 1)}; index >= 0; index--) {
         heapifyDown(index);
     }
 }
 
-template <typename T>
-void PriorityQueue<T>::push(const T& item) {
+template <typename T, typename Container, typename Compare>
+void PriorityQueue<T, Container, Compare>::push(const T& item) {
     if (arr.size() < maxSize) {
         arr.push_back(item);
         Index newItemId{static_cast<int>(arr.size() - 1)};
@@ -103,8 +104,8 @@ void PriorityQueue<T>::push(const T& item) {
     }
 }
 
-template <typename T>
-void PriorityQueue<T>::pop() {
+template <typename T, typename Container, typename Compare>
+void PriorityQueue<T, Container, Compare>::pop() {
     if (!arr.empty()) {
         std::swap(arr.front(), arr.back());
         arr.pop_back();
@@ -115,8 +116,8 @@ void PriorityQueue<T>::pop() {
     }
 }
 
-template <typename T>
-const T& PriorityQueue<T>::top() const {
+template <typename T, typename Container, typename Compare>
+const T& PriorityQueue<T, Container, Compare>::top() const {
     if (!arr.empty()) {
         return arr.front();
     } else {
@@ -124,8 +125,8 @@ const T& PriorityQueue<T>::top() const {
     }
 }
 
-template <typename T>
-void PriorityQueue<T>::print() const {
+template <typename T, typename Container, typename Compare>
+void PriorityQueue<T, Container, Compare>::print() const {
     std::cout << "Arr:" << std::endl;
     for (auto x : arr) {
         std::cout << x << " ";
