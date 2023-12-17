@@ -1,7 +1,7 @@
 project(PriorityQueue)
 
 add_library(${PROJECT_NAME} INTERFACE)
-add_library(lib::QuickSort ALIAS ${PROJECT_NAME})
+add_library(lib::priorityQueue ALIAS ${PROJECT_NAME})
 
 target_include_directories(
     ${PROJECT_NAME}

@@ -8,4 +8,4 @@ target_sources(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/src)
 
 target_link_libraries(${PROJECT_NAME} lib::priorityQueue)
 
-# add_subdirectory(test)
+add_subdirectory(test)

@@ -1,4 +1,4 @@
-project(PriorityQueue_test)
+project(huffman_test)
 
 set(CMAKE_CXX_STANDARD 14)
 
@@ -14,13 +14,13 @@ add_library(GTest::GTest INTERFACE IMPORTED)
 target_link_libraries(GTest::GTest INTERFACE gtest_main)
 
 add_executable(${PROJECT_NAME} 
-    src/priority_queue_test.cc
+  src/huffman_test.cc
 )
 
 target_link_libraries(${PROJECT_NAME}
-    PRIVATE
-    GTest::GTest
-    lib::priorityQueue
+ PRIVATE
+  GTest::GTest
+  lib::Huffman
 )
 
-add_test(PriorityQueue_test PriorityQueue)
+add_test(Huffman huffman_test)

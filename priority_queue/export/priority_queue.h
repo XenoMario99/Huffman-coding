@@ -1,6 +1,6 @@
 #pragma once
 
-#include <cmath>
+#include <algorithm>
 #include <iostream>
 #include <stdexcept>
 #include <utility>
@@ -34,16 +34,16 @@ class PriorityQueue {
    private:
     void heapifyUp(Index& index);
     void heapifyDown(const Index& index);
+    T erase(int16_t index);
 
    public:
     void buildHeap(const Container& inputArr);
     void push(const T& item);
     void pop();
+    T erase(const T& item);
     const T& top() const;
     int size() const { return arr.size(); };
     bool empty() const { return arr.empty(); };
-
-    void print() const;
 };
 
 template <typename T, typename Container, typename Compare>
@@ -117,21 +117,26 @@ void PriorityQueue<T, Container, Compare>::pop() {
 }
 
 template <typename T, typename Container, typename Compare>
+T PriorityQueue<T, Container, Compare>::erase(const T& item) {
+    const auto ptr{std::find(arr.begin(), arr.end(), item)};
+    if (ptr != arr.end()) {
+        Index index{static_cast<int32_t>(std::distance(arr.begin(), ptr))};
+        std::swap(arr.front(), arr.at(index));
+        T temp{top()};
+        pop();
+        return temp;
+    } else {
+        throw std::out_of_range("Cannot erase, symbol not found");
+    }
+}
+
+template <typename T, typename Container, typename Compare>
 const T& PriorityQueue<T, Container, Compare>::top() const {
     if (!arr.empty()) {
         return arr.front();
     } else {
         throw std::runtime_error("Queue is empty! cannot access top.");
     }
-}
-
-template <typename T, typename Container, typename Compare>
-void PriorityQueue<T, Container, Compare>::print() const {
-    std::cout << "Arr:" << std::endl;
-    for (auto x : arr) {
-        std::cout << x << " ";
-    }
-    std::cout << std::endl;
 }
 
 }  // namespace  queue

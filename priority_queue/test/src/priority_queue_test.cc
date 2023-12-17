@@ -92,4 +92,17 @@ TEST_F(PriorityQueueTest, push_ok) {
     EXPECT_EQ(queue.size(), refQueue.size());
 }
 
+TEST_F(PriorityQueueTest, eraseWhenGivenIndex_ok) {
+    queue.buildHeap(arr);
+    const auto& element{arr.front()};
+    auto selected{queue.erase(element)};
+    EXPECT_TRUE(std::find(arr.begin(), arr.end(), selected) != arr.end());
+}
+
+TEST_F(PriorityQueueTest, eraseWhenGivenIndex_Nok) {
+    queue.buildHeap(arr);
+    const auto& element{*std::max_element(arr.begin(), arr.end()) + 1};
+    EXPECT_THROW(queue.erase(element), std::out_of_range);
+}
+
 }  // namespace queue
